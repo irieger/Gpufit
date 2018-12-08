@@ -3,15 +3,6 @@
 
 #include <string>
 
-#include <cstdint>
-#include <limits>
-#include <stdexcept>
-
-#ifndef __int32
-#define __int32  int32_t
-#endif
-
-
 std::string last_error ;
 
 int gpufit
@@ -35,24 +26,14 @@ int gpufit
 )
 try
 {
-    __int32 n_points_32 = 0;
-    if (n_points <= (unsigned int)(std::numeric_limits<__int32>::max()))
-    {
-        n_points_32 = __int32(n_points);
-    }
-    else
-    {
-        throw std::runtime_error("maximum number of data points per fit exceeded");
-    }
-
     FitInterface fi(
         data,
         weights,
         n_fits,
-        n_points_32,
+        static_cast<int>(n_points),
         tolerance,
         max_n_iterations,
-        estimator_id,
+        static_cast<EstimatorID>(estimator_id),
         initial_parameters,
         parameters_to_fit,
         user_info,
@@ -62,21 +43,21 @@ try
         output_chi_squares,
         output_n_iterations);
 
-    fi.fit(model_id);
+    fi.fit(static_cast<ModelID>(model_id));
 
-    return STATUS_OK ;
+    return ReturnState::OK ;
 }
 catch( std::exception & exception )
 {
     last_error = exception.what() ;
 
-    return STATUS_ERROR ;
+    return ReturnState::ERROR ;
 }
 catch( ... )
 {
     last_error = "unknown error" ;
 
-    return STATUS_ERROR;
+    return ReturnState::ERROR;
 }
 
 char const * gpufit_get_last_error()
@@ -86,6 +67,7 @@ char const * gpufit_get_last_error()
 
 int gpufit_cuda_available()
 {
+	// Returns 1 if CUDA is available and 0 otherwise
 	try
 	{
 		getDeviceCount();
@@ -105,13 +87,13 @@ int gpufit_get_cuda_version(int * runtime_version, int * driver_version)
     {
         cudaRuntimeGetVersion(runtime_version);
         cudaDriverGetVersion(driver_version);
-        return STATUS_OK;
+        return ReturnState::OK;
     }
     catch (std::exception & exception)
     {
         last_error = exception.what();
 
-        return STATUS_ERROR;
+        return ReturnState::ERROR;
     }
 }
 

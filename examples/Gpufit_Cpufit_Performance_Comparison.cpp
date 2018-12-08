@@ -12,14 +12,12 @@
 #include <chrono>
 #include <string>
 
-#include <unistd.h>
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 
 /*
-    Names of paramters for the 2D Gaussian peak model
+    Names of parameters for the 2D Gaussian peak model
 */
 struct Parameters
 {
@@ -208,7 +206,7 @@ No weights, Model: Gauss_2D, Estimator: LSE
 */
 int main(int argc, char * argv[])
 {
-    // title
+    // title 
     std::cout << "----------------------------------------" << std::endl;
     std::cout << "Performance comparison Gpufit vs. Cpufit" << std::endl;
     std::cout << "----------------------------------------" << std::endl << std::endl;
@@ -228,7 +226,7 @@ int main(int argc, char * argv[])
 	// check for CUDA runtime and driver
     int cuda_runtime_version = 0;
     int cuda_driver_version = 0;
-    bool const version_available = gpufit_get_cuda_version(&cuda_runtime_version, &cuda_driver_version) == STATUS_OK;
+    bool const version_available = gpufit_get_cuda_version(&cuda_runtime_version, &cuda_driver_version) == ReturnState::OK;
     int const cuda_runtime_major = cuda_runtime_version / 1000;
     int const cuda_runtime_minor = cuda_runtime_version % 1000 / 10;
     int const cuda_driver_major = cuda_driver_version / 1000;
@@ -351,28 +349,26 @@ int main(int argc, char * argv[])
 
         // run Cpufit and measure time
         std::chrono::high_resolution_clock::time_point t0 = std::chrono::high_resolution_clock::now();
-        // int const cpu_status
-        //     = cpufit
-        //     (
-        //         n_fits,
-        //         n_points,
-        //         data.data(),
-        //         0,
-        //         GAUSS_2D,
-        //         initial_parameters.data(),
-        //         tolerance,
-        //         max_n_iterations,
-        //         parameters_to_fit.data(),
-        //         LSE,
-        //         0,
-        //         0,
-        //         cpufit_parameters.data(),
-        //         cpufit_states.data(),
-        //         cpufit_chi_squares.data(),
-        //         cpufit_n_iterations.data()
-        //     );
-        int const cpu_status = 0;
-        usleep((std::size_t) 10 * n_fits);
+        int const cpu_status
+            = cpufit
+            (
+                n_fits,
+                n_points,
+                data.data(),
+                0,
+                GAUSS_2D,
+                initial_parameters.data(),
+                tolerance,
+                max_n_iterations,
+                parameters_to_fit.data(),
+                LSE,
+                0,
+                0,
+                cpufit_parameters.data(),
+                cpufit_states.data(),
+                cpufit_chi_squares.data(),
+                cpufit_n_iterations.data()
+            );
         std::chrono::milliseconds::rep const dt_cpufit = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t0).count();
 
         if (cpu_status != 0)
@@ -426,7 +422,7 @@ int main(int argc, char * argv[])
 
         // print the calculation speed in fits/s
         std::cout << std::fixed << std::setprecision(0);
-        if (dt_cpufit || std::abs(static_cast<double>(dt_cpufit)) == 0.0)
+        if (dt_cpufit)
         {
             std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_cpufit)* 1000.0 << std::setw(3) << "|";
         }
@@ -434,7 +430,7 @@ int main(int argc, char * argv[])
         {
             std::cout << std::setw(13) << "inf" << std::setw(3) << "|";
         }
-        if (dt_gpufit || std::abs(static_cast<double>(dt_gpufit)) == 0.0)
+        if (dt_gpufit)
         {
             std::cout << std::setw(13) << static_cast<double>(n_fits) / static_cast<double>(dt_gpufit)* 1000.0 << std::setw(3) << "|";
             std::cout << std::fixed << std::setprecision(2);
@@ -450,8 +446,8 @@ int main(int argc, char * argv[])
             std::cout << std::setw(13) << "inf" << std::setw(3) << "|";
             std::cout << std::setw(12) << "inf";
         }
-
-        std::cout << std::endl;
+        
+        std::cout << std::endl;        
     }
     std::cout << std::endl << "Test completed!" << std::endl;
     std::cout << "Press ENTER to exit" << std::endl;

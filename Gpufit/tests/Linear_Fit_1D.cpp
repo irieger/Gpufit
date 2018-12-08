@@ -5,12 +5,13 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include <array>
+#include <cmath>
 
 BOOST_AUTO_TEST_CASE( Linear_Fit_1D )
 {
 	/*
 		Performs a single fit using the Linear Fit (LINEAR_1D) model.
-		- Uses user info
+		- Uses user info 
 		- Uses trivial weights.
 		- No noise is added.
 		- Checks fitted parameters equalling the true parameters.
@@ -22,19 +23,19 @@ BOOST_AUTO_TEST_CASE( Linear_Fit_1D )
 	std::array< float, 2 > const true_parameters{ { 1, 1 } };
 
     std::array< float, n_points > data{ { 1, 2 } } ;
-
+    
 	std::array< float, n_points > weights{ { 1, 1 } } ;
 
     std::array< float, 2 > initial_parameters{ { 1, 0 } } ;
 
     float tolerance{ 0.00001f } ;
-
+    
 	int max_n_iterations{ 10 } ;
-
+    
 	std::array< int, 2 > parameters_to_fit{ { 1, 1 } } ;
-
+    
 	std::array< float, n_points > user_info{ { 0.f, 1.f } } ;
-
+    
 	std::array< float, 2 > output_parameters ;
     int output_states ;
     float output_chi_squares ;

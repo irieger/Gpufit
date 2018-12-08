@@ -133,7 +133,7 @@ void perform_cpufit_gpufit_and_check(void (*func)(FitInput &))
 
 	// sanity checks (we don't want to introduce faulty data)
 	BOOST_CHECK(i.sanity_check());
-
+	
 	// reset output variables
 	FitOutput gpu, cpu;
 	clean_resize(gpu.parameters, i.n_fits * i.n_parameters);

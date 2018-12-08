@@ -1,4 +1,4 @@
-# Levenberg Marquardt curve fitting in CUDA
+# Levenberg Marquardt curve fitting in CUDA 
 # https://github.com/gpufit/Gpufit
 # see also CMake configuration in /docs/installation.rst
 
@@ -7,14 +7,13 @@
 cmake_minimum_required( VERSION 3.7 )
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
-set (CMAKE_CXX_STANDARD 11)
-
-set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -g" )
-set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3" )
-
 if( NOT PROJECT_NAME )
   project( Gpufit VERSION 1.0.2 )
   include( CTest )
+endif()
+
+if( NOT CMAKE_CXX_STANDARD )
+	set( CMAKE_CXX_STANDARD 14 )
 endif()
 
 if( MSVC ) # link runtime statically
@@ -123,32 +122,32 @@ else()
 	file( TO_CMAKE_PATH "$ENV{HOME}" home )
 endif()
 
-#if( Matlab_FOUND )
-#  set( Matlab_WORKING_DIRECTORY "${home}" CACHE PATH "MATLAB working directory" )
-#  if( Matlab_WORKING_DIRECTORY )
-#    add_custom_target( RUN_MATLAB )
-#    set_property( TARGET RUN_MATLAB PROPERTY FOLDER CMakePredefinedTargets )
-#    add_dependencies( RUN_MATLAB CpufitMex GpufitMex )
-#    add_matlab_launcher( RUN_MATLAB
-#      "${CMAKE_SOURCE_DIR}/Cpufit/matlab"
-#      "${CMAKE_SOURCE_DIR}/Gpufit/matlab"
-#      "${Matlab_WORKING_DIRECTORY}"
-#    )
-#  endif()
-#endif()
-#
-#if( PYTHONINTERP_FOUND )
-#  set( Python_WORKING_DIRECTORY "${home}" CACHE PATH "Python working directory" )
-#  if( Python_WORKING_DIRECTORY )
-#    add_custom_target( RUN_PYTHON )
-#    set_property( TARGET RUN_PYTHON PROPERTY FOLDER CMakePredefinedTargets )
-#    add_dependencies( RUN_PYTHON Gpufit )
-#    add_python_launcher( RUN_PYTHON
-#      "${CMAKE_SOURCE_DIR}/Gpufit/python"
-#      "${Python_WORKING_DIRECTORY}"
-#    )
-#  endif()
-#endif()
+if( Matlab_FOUND )
+  set( Matlab_WORKING_DIRECTORY "${home}" CACHE PATH "MATLAB working directory" )
+  if( Matlab_WORKING_DIRECTORY )
+    add_custom_target( RUN_MATLAB )
+    set_property( TARGET RUN_MATLAB PROPERTY FOLDER CMakePredefinedTargets )
+    add_dependencies( RUN_MATLAB CpufitMex GpufitMex )
+    add_matlab_launcher( RUN_MATLAB
+      "${CMAKE_SOURCE_DIR}/Cpufit/matlab"
+      "${CMAKE_SOURCE_DIR}/Gpufit/matlab"
+      "${Matlab_WORKING_DIRECTORY}"
+    )
+  endif()
+endif()
+
+if( PYTHONINTERP_FOUND )
+  set( Python_WORKING_DIRECTORY "${home}" CACHE PATH "Python working directory" )
+  if( Python_WORKING_DIRECTORY )
+    add_custom_target( RUN_PYTHON )
+    set_property( TARGET RUN_PYTHON PROPERTY FOLDER CMakePredefinedTargets )
+    add_dependencies( RUN_PYTHON Gpufit )
+    add_python_launcher( RUN_PYTHON
+      "${CMAKE_SOURCE_DIR}/Gpufit/python"
+      "${Python_WORKING_DIRECTORY}"
+    )
+  endif()
+endif()
 
 # Tests
 
